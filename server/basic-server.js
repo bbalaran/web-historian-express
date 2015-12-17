@@ -2,12 +2,13 @@ var http = require("http");
 var express = require("express");
 var path = require('path');
 var app = express();
+
+app.use(express.static('client'));
+
 app.get('/', function (req, res) {
-  return res.sendFile(path.resolve(__dirname, '../client/index.html'), function (err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
+
+
+
 });
 
 var port = 3000;
