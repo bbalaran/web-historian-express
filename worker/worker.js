@@ -1,25 +1,48 @@
 var http = require("http");
-var request = require ("request");
+var request = require("request");
+var redis = require('redis');
 
-  var sampleSite = {
-    'google': {
-      queued: false,
-      site: 'www.google.com',
-      html: ''
+var client = redis.createClient()
+
+var sampleSite = {
+  'google': {
+    queued: false,
+    site: 'www.google.com',
+    html: ''
+  }
+};
+
+module.exports.queue = function(key,url) {
+  //get from redis at key
+  client.get(key, function(err, reply) {
+    //if key is undefined
+    if (reply === undefined) {
+      //create new JSON obj with schema above
+      var store = {
+          queued: false,
+          site: url,
+          html: ''
+        }
+        //set JSON to key in redis
+      client.set(reply, store);
     }
-  };
-
+  })
+  //send html
+  return key.html
+};
 
 module.exports.process = function(key) {
-  
+
   // console.log(sampleSite.key.site);
 
-  var storeHtml = function (html) {
-    console.log(html);
-  } 
+  var storeHtml = function(html) {
+    //console.log(html);
+    client.set(key.html, JSON.stringify(html))
 
-  request(key.site, function(err,res,body){
-    if(err){
+  }
+
+  request(key.site, function(err, res, body) {
+    if (err) {
       throw err;
     } else {
       storeHtml(body);
@@ -45,5 +68,7 @@ module.exports.process = function(key) {
   // req.write('data\n');
   // req.end();
 
-}
+};
 
+
+module.exports.serve = function(html) {}

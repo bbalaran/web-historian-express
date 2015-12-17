@@ -3,13 +3,10 @@ var express = require("express");
 var path = require('path');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-// var redis = require('redis');
 
 var worker = require('../worker/worker.js');
 
 var app = express();
-// var client = redis.createClient()
-
 
 
 
@@ -31,12 +28,14 @@ var sites = {
 
   'walmart': {
     queued: false,
-    site: 'www.walmart.com',
+    site: 'http://www.walmart.com',
     html: ''
   }
 
 };
 
+
+//worker processing
 worker.process(sites.google);
 
 app.param('sites', function (req,res,next,site){
@@ -56,8 +55,13 @@ app.param('sites', function (req,res,next,site){
 app.get('/:sites', function(req, res) {
     res.json(req.site);
     //if html is ''
+    if(req.site.html === ''){
       //send robot 
+    } else {
     //else send html
+      res.json(worker.serve(req.site));
+    }
+
 });
 
 var port = 3000;
