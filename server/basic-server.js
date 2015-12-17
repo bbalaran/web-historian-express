@@ -5,6 +5,10 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 
 var app = express();
+
+
+
+
 //temporary storage
 var sites = {
   'google': {
@@ -29,7 +33,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/:sites', function(req, res) {
-  res.json(sites)
+  if(sites[req.params.sites]){
+  res.json(sites[req.params.sites])
+  } else {
+    res.status(404).send()
+  }
 
 
 });
